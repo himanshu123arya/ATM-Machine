@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+class Account {
+    constructor(accountNumber, pin, balance) {
+        this.accountNumber = accountNumber;
+        this.pin = pin;
+        this.balance = balance;
+    }
+       checkBalance() {
+        return this.balance;
+    }
+        deposit(amount) {
+        this.balance += amount;
+        console.log(`Deposited: $${amount}. New Balance: $${this.balance}`);
+    }
+
+ 
+    withdraw(amount) {
+        if (this.balance >= amount) {
+            this.balance -= amount;
+            console.log(`Withdrawn: $${amount}. New Balance: $${this.balance}`);
+        } else {
+            console.log("Insufficient funds.");
+        }
+    }
+}
+
+
+class Card {
+    constructor(account, pin) {
+        this.account = account;
+        this.pin = pin;
+    }
+
+
+    validatePin(inputPin) {
+        return inputPin === this.pin;
+    }
+}
+
+class Transaction {
+    constructor(account) {
+        this.account = account;
+    }
+
+  
+    processWithdrawal(amount) {
+        this.account.withdraw(amount);
+    }
+
+ 
+    processDeposit(amount) {
+        this.account.deposit(amount);
+    }
+
+   
+    checkBalance() {
+        console.log(`Current Balance: $${this.account.checkBalance()}`);
+    }
+}
+
+
+class ATM {
+    constructor() {
+        this.currentCard = null;
+    }
+
+
+    insertCard(card) {
+        this.currentCard = card;
+        console.log("Card inserted.");
+    }
+
+
+    enterPin(inputPin) {
+        if (this.currentCard && this.currentCard.validatePin(inputPin)) {
+            console.log("PIN validated.");
+            return true;
+        } else {
+            console.log("Invalid PIN.");
+            return false;
+        }
+    }
+
+
+    startTransaction() {
+        if (this.currentCard) {
+            const transaction = new Transaction(this.currentCard.account);
+            return transaction;
+        }
+        return null;
+    }
+
+
+    ejectCard() {
+        this.currentCard = null;
+        console.log("Card ejected.");
+    }
+}
+
+
+class Bank {
+    constructor() {
+        this.accounts = [];
+    }
+
+   
+    addAccount(account) {
+        this.accounts.push(account);
+    }
+
+    findAccount(accountNumber) {
+        return this.accounts.find(acc => acc.accountNumber === accountNumber);
+    }
+}
+
+
+const bank = new Bank();
+
+
+const account1 = new Account("123456", "1111", 500);
+const account2 = new Account("987654", "2222", 1000);
+
+
+bank.addAccount(account1);
+bank.addAccount(account2);
+
+
+const card1 = new Card(account1, "1111");
+const card2 = new Card(account2, "2222");
+
+const atm = new ATM();
+
+
+atm.insertCard(card1);
+if (atm.enterPin("1111")) {
+    const transaction = atm.startTransaction();
+    transaction.checkBalance();
+    transaction.processWithdrawal(200);
+    transaction.processDeposit(500);
+    transaction.checkBalance();
+}
+atm.ejectCard(); 
+
+
+atm.insertCard(card2); 
+if (atm.enterPin("2222")) {
+    const transaction = atm.startTransaction();
+    transaction.checkBalance();
+    transaction.processWithdrawal(150);
+    transaction.checkBalance();
+}
+atm.ejectCard(); 
+
+
+
+
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>
